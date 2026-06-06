@@ -19,9 +19,16 @@ class MeasurementScreen extends StatelessWidget {
   }
 }
 
-class _MeasurementView extends StatelessWidget {
+class _MeasurementView extends StatefulWidget {
   final String imagePath;
   const _MeasurementView({required this.imagePath});
+
+  @override
+  State<_MeasurementView> createState() => _MeasurementViewState();
+}
+
+class _MeasurementViewState extends State<_MeasurementView> {
+  int? _activeGripIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +38,12 @@ class _MeasurementView extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () =>
-                context.read<MeasurementBloc>().add(const MeasurementReset()),
+            onPressed: () {
+              setState(() {
+                _activeGripIndex = null;
+              });
+              context.read<MeasurementBloc>().add(const MeasurementReset());
+            },
             tooltip: 'Reset',
           )
         ],
@@ -41,24 +52,69 @@ class _MeasurementView extends StatelessWidget {
         child: BlocBuilder<MeasurementBloc, MeasurementState>(
           builder: (context, state) {
             return GestureDetector(
+              onPanStart: (details) {
+                final RenderBox renderBox =
+                    context.findRenderObject() as RenderBox;
+                final Offset localPos =
+                    renderBox.globalToLocal(details.globalPosition);
+
+                // Check if the user's touch is near any existing point (45px radius target)
+                for (int i = 0; i < state.points.length; i++) {
+                  if ((localPos - state.points[i]).distance <= 45.0) {
+                    setState(() {
+                      _activeGripIndex = i;
+                    });
+                    break;
+                  }
+                }
+              },
+
+              onPanUpdate: (details) {
+                if (_activeGripIndex != null) {
+                  final RenderBox renderBox =
+                      context.findRenderObject() as RenderBox;
+                  final Offset localPos =
+                      renderBox.globalToLocal(details.globalPosition);
+
+                  context.read<MeasurementBloc>().add(
+                        PointDragged(
+                            index: _activeGripIndex!, newPosition: localPos),
+                      );
+                }
+              },
+
+              // Lifted finger: release the active point grip
+              onPanEnd: (_) {
+                setState(() {
+                  _activeGripIndex = null;
+                });
+              },
+
+              //simple tapping for placing initial lines down
               onTapDown: (details) {
-                // Snapping logic — if 4th point is close to point[1], snap to it
                 Offset tapped = details.localPosition;
+
+                // Simple placement snap: if placing point 4 (index 3), snap to vertex (index 1) if close
                 if (state.points.length == 3) {
-                  if ((tapped - state.points[1]).distance <= 25.0) {
+                  if ((tapped - state.points[1]).distance <= 45.0) {
                     tapped = state.points[1];
                   }
                 }
-                context.read<MeasurementBloc>().add(PointAdded(tapped));
+
+                if (state.points.length < 4 && _activeGripIndex == null) {
+                  context.read<MeasurementBloc>().add(PointAdded(tapped));
+                }
               },
               child: Stack(
                 fit: StackFit.loose,
                 children: [
-                  Image.file(File(imagePath), fit: BoxFit.contain),
+                  Image.file(File(widget.imagePath), fit: BoxFit.contain),
                   Positioned.fill(
                     child: CustomPaint(
                       painter: MeasurementPainter(
-                          points: state.points, angle: state.angle),
+                        points: state.points,
+                        angle: state.angle,
+                      ),
                     ),
                   ),
                 ],

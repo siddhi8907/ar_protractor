@@ -26,6 +26,13 @@ dependencies:
   ar_angle_painter:
     path: ../ar_angle_painter
 
+  angle_calc:
+    path: ../angle_calc
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+
+flutter:
+  uses-material-design: true
