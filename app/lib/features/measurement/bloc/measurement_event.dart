@@ -1,0 +1,21 @@
+import 'package:flutter/painting.dart';
+import 'package:equatable/equatable.dart';
+
+abstract class MeasurementEvent extends Equatable {
+  const MeasurementEvent();
+}
+
+class PointAdded extends MeasurementEvent {
+  final Offset point;
+  const PointAdded(this.point);
+
+  @override
+  List<Object> get props => [point];
+}
+
+class MeasurementReset extends MeasurementEvent {
+  const MeasurementReset();
+
+  @override
+  List<Object> get props => [];
+}

@@ -20,7 +20,7 @@ dependencies:
   
   # BLoC
   flutter_bloc: ^8.1.5
-  equatable: ^2.0.5
+  equatable: ^2.0.8
   
   # Your own package (local reference for now)
   ar_angle_painter:

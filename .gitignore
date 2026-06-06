@@ -1,0 +1,27 @@
+# Cache and dependency directories (Matches both /app and /ar_angle_painter)
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Android specific build artifacts
+*.iml
+*.apk
+*.aab
+
+# iOS specific build artifacts
+.ios/
+ios/.generated/
+Flutter/Flutter.podspec
+Pods/
+
+# IDEs and system tools
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
