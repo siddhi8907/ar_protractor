@@ -1,0 +1,31 @@
+name: ar_protractor
+description: AR Protractor app
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Camera
+  camera: ^0.12.0+1
+
+  # Path
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  
+  # Permissions
+  permission_handler: ^11.3.0
+  
+  # BLoC
+  flutter_bloc: ^8.1.5
+  equatable: ^2.0.5
+  
+  # Your own package (local reference for now)
+  ar_angle_painter:
+    path: ../ar_angle_painter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
