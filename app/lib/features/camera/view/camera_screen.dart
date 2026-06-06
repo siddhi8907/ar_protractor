@@ -120,78 +120,73 @@ class _CameraScreenState extends State<CameraScreen>
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Camera preview with pinch zoom
-          GestureDetector(
-            onScaleStart: _onScaleStart,
-            onScaleUpdate: _onScaleUpdate,
-            child: CameraPreview(_controller!),
-          ),
-          // Grid overlay
-          Positioned.fill(
-            child: CustomPaint(
-              painter: _GridPainter(),
+      body: GestureDetector(
+        onScaleStart: _onScaleStart,
+        onScaleUpdate: _onScaleUpdate,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            CameraPreview(
+                _controller!), // no GestureDetector wrapping this anymore
+            // Grid overlay
+            Positioned.fill(
+              child: CustomPaint(painter: _GridPainter()),
             ),
-          ),
-
-          // Flash toggle button — top right
-          Positioned(
-            top: 50,
-            right: 20,
-            child: GestureDetector(
-              onTap: _toggleFlash,
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.black45,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  _isFlashOn ? Icons.flash_on : Icons.flash_off,
-                  color: _isFlashOn ? Colors.yellow : Colors.white,
-                  size: 28,
+            // Flash button
+            Positioned(
+              top: 50,
+              right: 20,
+              child: GestureDetector(
+                onTap: _toggleFlash,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                    color: Colors.black45,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _isFlashOn ? Icons.flash_on : Icons.flash_off,
+                    color: _isFlashOn ? Colors.yellow : Colors.white,
+                    size: 28,
+                  ),
                 ),
               ),
             ),
-          ),
-
-          // Zoom level indicator
-          Positioned(
-            top: 55,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.black45,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${_currentZoom.toStringAsFixed(1)}x',
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
+            // Zoom indicator
+            Positioned(
+              top: 55,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black45,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${_currentZoom.toStringAsFixed(1)}x',
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                  ),
                 ),
               ),
             ),
-          ),
-
-          // Capture button
-          Positioned(
-            bottom: 40,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: FloatingActionButton(
-                onPressed: _takePicture,
-                backgroundColor: Colors.lightBlueAccent,
-                child: const Icon(Icons.camera_alt),
+            // Capture button
+            Positioned(
+              bottom: 40,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: FloatingActionButton(
+                  onPressed: _takePicture,
+                  backgroundColor: Colors.lightBlueAccent,
+                  child: const Icon(Icons.camera_alt),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

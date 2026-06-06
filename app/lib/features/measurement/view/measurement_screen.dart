@@ -29,6 +29,7 @@ class _MeasurementView extends StatefulWidget {
 
 class _MeasurementViewState extends State<_MeasurementView> {
   int? _activeGripIndex;
+  bool _snappingEnabled = true;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +37,12 @@ class _MeasurementViewState extends State<_MeasurementView> {
       appBar: AppBar(
         title: const Text('AR Protractor'),
         actions: [
+          IconButton(
+            icon: Icon(_snappingEnabled ? Icons.grid_on : Icons.grid_off),
+            onPressed: () =>
+                setState(() => _snappingEnabled = !_snappingEnabled),
+            tooltip: _snappingEnabled ? 'Snapping On' : 'Snapping Off',
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
@@ -75,14 +82,15 @@ class _MeasurementViewState extends State<_MeasurementView> {
                       context.findRenderObject() as RenderBox;
                   final Offset localPos =
                       renderBox.globalToLocal(details.globalPosition);
-
                   context.read<MeasurementBloc>().add(
                         PointDragged(
-                            index: _activeGripIndex!, newPosition: localPos),
+                          index: _activeGripIndex!,
+                          newPosition: localPos,
+                          snapping: _snappingEnabled, // pass it here
+                        ),
                       );
                 }
               },
-
               // Lifted finger: release the active point grip
               onPanEnd: (_) {
                 setState(() {

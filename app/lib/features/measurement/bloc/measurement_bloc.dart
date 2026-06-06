@@ -51,17 +51,16 @@ class MeasurementBloc extends Bloc<MeasurementEvent, MeasurementState> {
     final updatedPoints = List<Offset>.from(state.points);
     Offset fingerPos = event.newPosition;
 
-    for (int i = 0; i < updatedPoints.length; i++) {
-      if (i == event.index) continue;
-
-      final Offset otherPoint = updatedPoints[i];
-
-      if ((fingerPos.dy - otherPoint.dy).abs() <= 20.0) {
-        fingerPos = Offset(fingerPos.dx, otherPoint.dy);
-      }
-
-      if ((fingerPos.dx - otherPoint.dx).abs() <= 20.0) {
-        fingerPos = Offset(otherPoint.dx, fingerPos.dy);
+    if (event.snapping) {
+      for (int i = 0; i < updatedPoints.length; i++) {
+        if (i == event.index) continue;
+        final Offset otherPoint = updatedPoints[i];
+        if ((fingerPos.dy - otherPoint.dy).abs() <= 20.0) {
+          fingerPos = Offset(fingerPos.dx, otherPoint.dy);
+        }
+        if ((fingerPos.dx - otherPoint.dx).abs() <= 20.0) {
+          fingerPos = Offset(otherPoint.dx, fingerPos.dy);
+        }
       }
     }
 
@@ -72,9 +71,6 @@ class MeasurementBloc extends Bloc<MeasurementEvent, MeasurementState> {
       updatedAngle = _calculateAngle(updatedPoints);
     }
 
-    emit(state.copyWith(
-      points: updatedPoints,
-      angle: updatedAngle,
-    ));
+    emit(state.copyWith(points: updatedPoints, angle: updatedAngle));
   }
 }

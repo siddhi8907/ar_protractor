@@ -23,9 +23,11 @@ class MeasurementReset extends MeasurementEvent {
 class PointDragged extends MeasurementEvent {
   final int index;
   final Offset newPosition;
+  final bool snapping;
 
-  const PointDragged({required this.index, required this.newPosition});
+  const PointDragged(
+      {required this.index, required this.newPosition, this.snapping = true});
 
   @override
-  List<Object?> get props => [index, newPosition];
+  List<Object?> get props => [index, newPosition, snapping];
 }
